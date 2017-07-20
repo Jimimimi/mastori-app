@@ -8,12 +8,16 @@
  * Controller of the app
  */
 angular.module('app')
-  .controller('MastoriCtrl', ['$scope', '$state', 'MastoriModel', 'AppointmentModel', 'RatingModel', 'AuthService', 'toaster', 'moment',
-    function ($scope, $state, MastoriModel, AppointmentModel, RatingModel, AuthService, toaster, $moment) {
+  .controller('MastoriCtrl', ['$scope', '$state', 'MastoriModel', 'AppointmentModel', 'RatingModel', 'AuthService', 'toaster', 'moment', 'matcherFilter',
+    function ($scope, $state, MastoriModel, AppointmentModel, RatingModel, AuthService, toaster, $moment, $matcherFilter) {
 
-    $scope.mastori = MastoriModel.query({id: $state.params.id});
+    $scope.mastori = MastoriModel.query({id: $state.params.id},function success(mastori){
+      // screw you angular
+      $scope.allowedAppointmentAddresses = $matcherFilter($scope.user.addresses, mastori.areas, 'area_id');
+    });
     $scope.user = AuthService.user();
     $scope.hide_appointment_form = true;
+    $scope.allowedAppointmentAddresses = []; // init allowed addreses in appountment form
 
     var appointmentQueryParams = {orderby: 'created_at', order: 'desc', mastori_id: $state.params.id};
     var ratingQueryParams = {orderby: 'created_at', order: 'desc', mastori_id: $state.params.id};
@@ -28,7 +32,7 @@ angular.module('app')
     var appointmentInit = function() {
     	$scope.appointment = new AppointmentModel();
     	$scope.appointment.deadline = today.clone().add(1, 'day').toDate();
-		  $scope.appointment.address_id = $scope.user.addresses[0].id;
+      //$scope.allowedAppointmentAddresses = $matcherFilter($scope.user.addresses, $scope.mastori.areas, 'area_id');
     };
 
     $scope.appoointmentRatingInit = function(appointment) {
