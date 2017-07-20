@@ -6,8 +6,8 @@
   ])
   .constant('Config', {
     api: {
-       url: 'http://dev.local.mastori-api',
-      // / url: 'http://api.mastori.gr'
+      //  url: 'http://dev.local.mastori-api',
+      url: 'http://api.mastori.gr'
      }
     }
   );
